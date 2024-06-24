@@ -1,16 +1,18 @@
 name: Update public suffix file
 on:
   schedule:
-    - cron: '35 6 * * *'
+    - cron: '*/2 * * * *'
 
 permissions:
   contents: write
 
 jobs:
-  build:
+  update:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
       - name: Update file
-        run: cd esp && ./update-publix-suffix-list.sh
+        run: git config user.name github-actions \
+          && git config user.email github-actions@github.com \
+          && cd esp && ./update-public-suffix-list.sh

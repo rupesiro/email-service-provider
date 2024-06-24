@@ -1,7 +1,26 @@
 [versions]
+jetbrains-annotations = "24.1.0"
+jqwik = "1.8.5"
 junit = "5.10.2"
 junit-platform = "1.10.2"
 
 [libraries]
+jetbrains-annotations = { module = "org.jetbrains:annotations", version.ref = "jetbrains-annotations" }
+jqwik-api = { module = "net.jqwik:jqwik-api", version.ref = "jqwik" }
+jqwik-engine = { module = "net.jqwik:jqwik-engine", version.ref = "jqwik" }
+jqwik-time = { module = "net.jqwik:jqwik-time", version.ref = "jqwik" }
+jqwik-web = { module = "net.jqwik:jqwik-web", version.ref = "jqwik" }
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
 junit-platform = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit-platform" }
+
+[bundles]
+testing = [
+    "jqwik-api",
+    "jqwik-time",
+    "jqwik-web",
+    "junit-jupiter",
+]
+testing-runtime = [
+    "jqwik-engine",
+    "junit-platform",
+]

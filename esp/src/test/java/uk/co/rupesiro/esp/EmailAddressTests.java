@@ -5,11 +5,21 @@ import net.jqwik.web.api.Web;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Label("EmailAddress Unit Tests")
 public class EmailAddressTests {
+    @Example
+    @Label("example@example.com is valid")
+    void exampleEmail() {
+        EmailAddress emailAddress = EmailAddress.from("example@example.com");
+        assertAll(
+                () -> assertEquals("example", emailAddress.getLocalPart()),
+                () -> assertEquals("example.com", emailAddress.getHost()),
+                () -> assertEquals("example@example.com", emailAddress.toString())
+        );
+    }
+
     @Property(tries = 2_500)
     @Label("Valid email addresses")
     void valid(@ForAll("validEmailAddresses") String rawEmailAddress) {

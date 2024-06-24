@@ -1,0 +1,54 @@
+name: Build & Package Library
+on:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup GraalVM
+        uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: 21
+          distribution: graalvm
+          native-image-job-reports: true
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          validate-wrappers: true
+          dependency-graph: generate-and-submit
+          dependency-graph-continue-on-failure: false
+          build-scan-publish: true
+          build-scan-terms-of-use-url: https://gradle.com/terms-of-service
+          build-scan-terms-of-use-agree: yes
+      - name: Test code & Generate GraalVM metadata
+        run: ./gradlew --no-scan test metadataCopy -Pagent
+        env:
+          GITHUB_DEPENDENCY_GRAPH_ENABLED: false
+      - name: Full build # TODO: Build GraalVM libraries in a matrix build (for the different OSes)
+        run: ./gradlew build nativeCompile --scan
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: |
+            esp/build/libs/*.jar
+            esp/build/native/nativeCompile/*.dll
+            esp/build/native/nativeCompile/*.lib
+            esp/build/native/nativeCompile/*.so
+            esp/build/native/nativeCompile/*.h
+          compression-level: 0
+      - name: Upload build reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: build-reports
+          path: esp/build/reports/
+          compression-level: 9

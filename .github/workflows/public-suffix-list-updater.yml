@@ -1,0 +1,16 @@
+name: Update public suffix file
+on:
+  schedule:
+    - cron: '35 6 * * *'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Update file
+        run: cd esp && ./update-publix-suffix-list.sh
